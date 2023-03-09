@@ -18,6 +18,7 @@ class User extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
+            'role' => $this->getRoleNames(),
             'created_at' => $this->created_at->format('m/d/Y H:i:s'),
             'updated_at' => $this->updated_at->format('m/d/Y H:i:s'),
         ];

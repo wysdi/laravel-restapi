@@ -28,14 +28,15 @@ class DatabaseSeeder extends Seeder
             'email' => 'user1@example.com',
         ])->each(function ($user, $role1) {
             $user->posts()->saveMany(Blog::factory()->count(5)->make());
-            $user->assignRole($role1);
+            $user->assignRole('user');
         });
 
         \App\Models\User::factory()->create([
             'email' => 'user2@example.com',
         ])->each(function ($user, $role1) {
             $user->posts()->saveMany(Blog::factory()->count(5)->make());
-            $user->assignRole($role1);
+            $user->assignRole('user');
+
         });
 
 
