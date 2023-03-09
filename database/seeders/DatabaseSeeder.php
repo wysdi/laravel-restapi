@@ -3,7 +3,10 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Blog;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,11 +15,42 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        // Reset cached roles and permissions
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // create roles and assign existing permissions
+        $role1 = Role::create(['name' => 'user']);
+        $role2 = Role::create(['name' => 'manager']);
+        $role3 = Role::create(['name' => 'admin']);
+        // gets all permissions via Gate::before rule; see AuthServiceProvider
+
+        \App\Models\User::factory()->create([
+            'email' => 'user1@example.com',
+        ])->each(function ($user, $role1) {
+            $user->posts()->saveMany(Blog::factory()->count(5)->make());
+            $user->assignRole($role1);
+        });
+
+        \App\Models\User::factory()->create([
+            'email' => 'user2@example.com',
+        ])->each(function ($user, $role1) {
+            $user->posts()->saveMany(Blog::factory()->count(5)->make());
+            $user->assignRole($role1);
+        });
+
+
+
+
+        $manager = \App\Models\User::factory()->create([
+            'name' => 'Manager',
+            'email' => 'manager@example.com',
+        ]);
+        $manager->assignRole($role2);
+
+        $admin = \App\Models\User::factory()->create([
+            'name' => 'Example Admin User',
+            'email' => 'admin@example.com',
+        ]);
+        $admin->assignRole($role3);
     }
 }
