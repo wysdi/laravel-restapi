@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\API\BlogController;
+use App\Http\Controllers\API\PostController;
 use App\Http\Controllers\API\UserController;
 
 /*
@@ -18,11 +18,11 @@ use App\Http\Controllers\API\UserController;
 */
 
 
-Route::post('login', [AuthController::class, 'login']);
+Route::post('token', [AuthController::class, 'login']);
 //Route::post('register', [AuthController::class, 'register']);
 
 Route::middleware('auth:sanctum')->group( function () {
-    Route::resource('posts', BlogController::class);
+    Route::resource('posts', PostController::class);
     Route::group(['middleware' => ['role:admin']], function () {
         Route::resource('users', UserController::class);
     });
