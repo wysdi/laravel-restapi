@@ -40,6 +40,13 @@ class UserController extends BaseController
         $user = User::create($input);
         $success['token'] =  $user->createToken('MyAuthApp')->plainTextToken;
         $success['name'] =  $user->name;
+        if (isset($input['role']) && in_array($input['role'], ['admin', 'manager'])){
+            $user->assignRole($input['role']);
+        }else{
+            $user->assignRole('user');
+        }
+
+        $success['role'] = $user->getRoleNames()[0];
 
         return $this->sendResponse($success, 'User created successfully.');
     }
@@ -63,10 +70,14 @@ class UserController extends BaseController
     {
         $input = $request->all();
 
-        $user->name = $input['name'];
-        $user->email = $input['email'];
+        $user->name = $input['name'] ?? '';
+        $user->email = $input['email'] ?? '';
+
 
         $user->save();
+        if (isset($input['role']) && in_array($input['role'], ['admin', 'manager'])){
+            $user->syncRoles($input['role']);
+        }
 
         return $this->sendResponse(new UserResource($user), 'User updated.');
     }
