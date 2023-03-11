@@ -44,8 +44,7 @@ class PostController extends BaseController
         if (is_null($post)) {
             return $this->sendError('Post does not exist.');
         }
-        $user =Auth::user();
-        if ($user->hasRole('user') && $post->user_id !== Auth::id()){
+        if ($this->isOwnPost($post)){
             return $this->sendError('You dont have access to view the post');
         }
 
@@ -54,8 +53,7 @@ class PostController extends BaseController
 
     public function update(Request $request, Post $post)
     {
-        $user =Auth::user();
-        if ($user->hasRole('user') && $post->user_id !== Auth::id()){
+        if ($this->isOwnPost($post)){
             return $this->sendError('You dont have access to modify the  post');
         }
 
@@ -77,8 +75,7 @@ class PostController extends BaseController
     public function destroy(Post $post)
     {
 
-        $user =Auth::user();
-        if ($user->hasRole('user') && $post->user_id !== Auth::id()){
+        if ($this->isOwnPost($post)){
             return $this->sendError('You dont have access to delete this post');
         }
 
@@ -86,5 +83,10 @@ class PostController extends BaseController
         return $this->sendResponse([], 'Post deleted.');
     }
 
+    private function isOwnPost(Post $post): bool
+    {
+        $user =Auth::user();
+        return ($user->hasRole('user') && $post->user_id !== Auth::id());
+    }
 
 }
