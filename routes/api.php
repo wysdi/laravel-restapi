@@ -22,9 +22,9 @@ Route::post('token', [AuthController::class, 'login']);
 //Route::post('register', [AuthController::class, 'register']);
 
 Route::middleware('auth:sanctum')->group( function () {
-    Route::resource('posts', PostController::class);
+    Route::resource('posts', PostController::class, ['except'=> ['show', 'create']]);
     Route::group(['middleware' => ['role:admin']], function () {
-        Route::resource('users', UserController::class);
+        Route::resource('users', UserController::class, ['except'=> ['show', 'create']]);
     });
 
 });
